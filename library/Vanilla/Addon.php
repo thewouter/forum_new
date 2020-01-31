@@ -471,7 +471,6 @@ class Addon implements Contracts\AddonInterface {
                         'className' => $className,
                         'path' => $path,
                     ];
-
                     // Check to see if the class is a plugin or a hook.
                     if (strcasecmp(substr($className, -6), 'plugin') === 0
                         || strcasecmp(substr($className, -5), 'hooks') === 0

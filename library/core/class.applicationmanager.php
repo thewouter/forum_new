@@ -267,6 +267,7 @@ class Gdn_ApplicationManager {
                 include_once $hooksPath;
             }
         }
+
         if (class_exists($hooks)) {
             /* @var Gdn_IPlugin $hooks The hooks object should be a plugin. */
             $hooks = Gdn::getContainer()->get($hooks);

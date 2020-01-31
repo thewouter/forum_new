@@ -1246,6 +1246,7 @@ class Gdn_PluginManager extends Gdn_Pluggable implements ContainerInterface {
                 $methodName = '';
         }
 
+
         $addon = $this->addonManager->lookupAddon($pluginName);
         if (!$addon || !$addon->getPluginClass()) {
             return;
