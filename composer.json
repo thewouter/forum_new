@@ -57,7 +57,8 @@
         "psr/event-dispatcher": "^1.0",
         "fig/event-dispatcher-util": "^1.1",
         "symfony/polyfill-php73": "^1.13",
-        "symfony/polyfill-php74": "^1.13"
+        "symfony/polyfill-php74": "^1.13",
+        "eluceo/ical": "^0.16.0"
     },
     "require-dev": {
         "exussum12/coverage-checker": "~0.10",

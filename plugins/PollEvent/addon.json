@@ -1,0 +1,17 @@
+{
+    "type": "addon",
+    "key": "PollEvent",
+    "name": "Radix Enschede Addon",
+    "description": "This addon is written for Radix Enschede",
+    "version": "0.0.0",
+    "mobileFriendly": true,
+    "authors": [
+        {
+            "name": "Wouter van Harten",
+            "email": "wouter@woutervanharten.nl",
+            "homepage": "https://nl.linkedin.com/in/wouter-van-harten-21409a103"
+        }
+    ],
+    "settingsUrl": "/settings/pollevent",
+    "settingsPermission": "Garden.Settings.Manage"
+}

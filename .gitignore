@@ -24,7 +24,7 @@
 /dist/*
 /locales/*
 !/locales/.gitkeep
-/plugins/*
+
 !/plugins/AllViewed/
 !/plugins/ButtonBar/
 !/plugins/Debugger/
