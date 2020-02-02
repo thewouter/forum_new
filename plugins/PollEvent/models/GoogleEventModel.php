@@ -29,6 +29,10 @@ class GoogleEventModel extends Gdn_Model{
         return $this->SQL->get();
     }
 
+    public function getByCategoryName($categoryNames) {
+
+    }
+
     /**
      * Convenience method to get a poll object associated with a discussion ID
      * @param int $DiscussionID

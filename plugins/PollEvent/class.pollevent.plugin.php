@@ -253,7 +253,7 @@ class PollEventPlugin extends Gdn_Plugin {
             // Make new calendar event
             $startDate = new dateTime($FormPostValues['DiscussionEventDates']);
             $startDate->setTimezone(new DateTimeZone('Europe/Amsterdam'));
-            $startDate->sub(new DateInterval('PT2H'));
+            $startDate->sub(new DateInterval('PT1H'));
             $endDate = clone $startDate;
             $endDate->add(new DateInterval('PT4H'));
             $Discussion = $EventModel->GetByDiscussionID($DiscussionID);
