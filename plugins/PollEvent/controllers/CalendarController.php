@@ -12,7 +12,7 @@ class CalendarController extends Gdn_Controller {
      */
     public function ical() {
         $vCalendar = new Calendar('www.radixenschede.nl');
-        $GoogleEventModel = new GoogleEventModel();
+        $EventModel = new EventModel();
         $events = array();
         if($this->Request->get()['category']){
             foreach ($this->Request->get()['category'] as $s) {
@@ -27,7 +27,7 @@ class CalendarController extends Gdn_Controller {
                 }
             }
         } else {
-            $events = $GoogleEventModel->getByDiscussionEventRange(0, false, false, false, array());
+            $events = $EventModel->getByDiscussionEventRange(0, false, false, false, array());
         }
 
         foreach ($events as $event) {

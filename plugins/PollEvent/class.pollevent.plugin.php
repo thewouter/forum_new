@@ -238,111 +238,12 @@ class PollEventPlugin extends Gdn_Plugin {
      * @throws Exception
      */
     private function saveEvent($FormPostValues, $DiscussionID) {
-        $EventModel = new GoogleEventModel();
-
-        $calendarId = 'no-reply@radixenschede.nl';
-        $access_token = $this->getAccessToken();
-        $GoogleID = $EventModel->GetGoogleCalendarByDiscussion($DiscussionID);
-        self::log_er($GoogleID);
-        if(!is_null($GoogleID) || strlen($GoogleID)>0){ // remove old calendar event if it exists
-            $this->removeGoogleCalendar($access_token, $calendarId, $GoogleID);
-        }
-
+        $EventModel = new EventModel();
         if (GetValue('DiscussionEventCheck', $FormPostValues)) {
             $EventModel->SaveDiscussionEventDate($DiscussionID, new dateTime($FormPostValues['DiscussionEventDates']));
-            // Make new calendar event
-            $startDate = new dateTime($FormPostValues['DiscussionEventDates']);
-            $startDate->setTimezone(new DateTimeZone('Europe/Amsterdam'));
-            $startDate->sub(new DateInterval('PT1H'));
-            $endDate = clone $startDate;
-            $endDate->add(new DateInterval('PT4H'));
-            $Discussion = $EventModel->GetByDiscussionID($DiscussionID);
-            $Discussion->DiscussionID = $DiscussionID;
-            $event = array(
-                'summary' => GetValue('Name', $FormPostValues),
-                'location' => 'Lambarene',
-                'description' => GetValue('Body',$FormPostValues)." \n\n ".DiscussionUrl($Discussion),
-                'start' => array(
-                    'dateTime' => $startDate->format(DateTime::ATOM),
-                    'timeZone' => 'Europe/Amsterdam',
-                ),
-                'end' => array(
-                    'dateTime' => $endDate->format(DateTime::ATOM),
-                    'timeZone' => 'Europe/Amsterdam',
-                ),
-                'reminders' => array(
-                    'useDefault' => FALSE,
-                    'overrides' => array(
-                        array(
-                            'method' => 'popup',
-                            'minutes' => 14*49,
-                        ),
-                    ),
-                ) ,
-            );
-            $eventId = $this->addGoogleCalendarEvent($access_token, $event, $calendarId);
-            $EventModel->addGoogleCalendarByDiscussion($DiscussionID, $eventId);
-        } else {
-            $EventModel->removeGoogleCalendarByDiscussion($DiscussionID);
+       } else {
+            $EventModel->RemoveDiscussionEventDate($DiscussionID);
         }
-    }
-
-    /**
-     * Remove event from the google calendar through the google calendar API
-     * @param string $access_token a valid access_token
-     * @param string $GoogleCalendarID Id of the event to remove
-     * @param string $calendarId the Id of the calendar containing the event.
-     *
-     */
-    public function removeGoogleCalendar($access_token, $calendarId, $GoogleCalendarID){
-        $curl_h = curl_init('https://www.googleapis.com/calendar/v3/calendars/'.$calendarId.'/events/'.$GoogleCalendarID.'?access_token='.$access_token);
-        curl_setopt($curl_h, CURLOPT_CUSTOMREQUEST, "DELETE");
-        curl_setopt($curl_h, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($curl_h);
-        curl_close($curl_h);
-    }
-
-    /**
-     * Add discussionEvent to the google calendar through the google calendar API
-     * @param string $access_token a valid access_token
-     * @param array $event Array representation of the event to add
-     * @param string $calendarId the Id of the calendar receiving the event.
-     * @return string $GoogleCalendarID the ID of the google calendar event.
-     */
-    public function addGoogleCalendarEvent($access_token, $event, $calendarId){
-        //print(serialize($event)."\n");
-        $data_string = json_encode($event);
-        $curl_h = curl_init('https://www.googleapis.com/calendar/v3/calendars/'.$calendarId.'/events?access_token='.$access_token);
-        curl_setopt($curl_h, CURLOPT_HTTPHEADER,
-            array(
-                'Content-Type: application/json',
-                'Content-Length: ' . strlen($data_string),
-            )
-        );
-        curl_setopt($curl_h, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl_h, CURLOPT_POST, 1);
-        curl_setopt($curl_h, CURLOPT_POSTFIELDS, $data_string);
-        $response = curl_exec($curl_h);
-        curl_close($curl_h);
-        return json_decode($response)->id;
-    }
-
-    /**
-     * Reqest the access_token from the google API
-     * @TODO save private data in seperate file.
-     * @return string The access_token
-     */
-    public function getAccessToken(){
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL,"https://www.googleapis.com/oauth2/v4/token");
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS,
-            file_get_contents(__DIR__."/Credentials/api.conf")
-        );
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $server_output = curl_exec ($ch);
-        curl_close ($ch);
-        return json_decode($server_output)->access_token;
     }
 
     /**
@@ -401,7 +302,7 @@ class PollEventPlugin extends Gdn_Plugin {
     }
 
     /**
-     * Show upcoming activities TODO: Wrap in module or use existing module
+     * Show upcoming activities
      * @param $Sender
      */
     public function DiscussionsController_AfterPageTitle_handler($Sender){
@@ -653,8 +554,8 @@ class PollEventPlugin extends Gdn_Plugin {
         $Construct = $Database->Structure();
 
         $Construct->table('Discussion')
-            ->column('GoogleCalendarID', 'varchar(140)', true)
             ->column('DiscussionEventDate', 'datetime', true)
+            ->column('DiscussionEventDuration', 'int', true)
             ->Set();
 
         $Construct->Table('DiscussionPolls');
@@ -701,16 +602,4 @@ class PollEventPlugin extends Gdn_Plugin {
             ->Column('OptionID', 'int', FALSE)
             ->Set();
     }
-
-//    public static function displayEventDate($EventDate) {
-//        if ($EventDate) {
-//            echo '<div class="DiscussionEventDate icon icon-calendar"> '.date_format(new dateTime($EventDate), "D j M \'y").'</div>';
-//        }
-//    }
-//
-//    public static function displayEventDateTime($EventDate) {
-//        if ($EventDate) {
-//            echo '<div class="DiscussionEventDate icon icon-calendar"> '.date_format(new dateTime($EventDate), "D j M \'y G:i").'</div>';
-//        }
-//    }
 }

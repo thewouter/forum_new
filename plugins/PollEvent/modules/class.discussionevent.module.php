@@ -16,7 +16,7 @@ class DiscussionEventModule extends Gdn_Module {
 			$Limit = C('Plugins.DiscussionEvent.MaxDiscussionEvents');
 		}
 
-		$DiscussionEventModel = new GoogleEventModel();
+		$DiscussionEventModel = new EventModel();
 
 		// Check for individual categories:
 		$Where = array();

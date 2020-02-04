@@ -1,7 +1,7 @@
 <?php
 
 
-class GoogleEventModel extends Gdn_Model{
+class EventModel extends Gdn_Model{
     /**
      * @param bool $Offset
      * @param bool $Limit
@@ -29,10 +29,6 @@ class GoogleEventModel extends Gdn_Model{
         return $this->SQL->get();
     }
 
-    public function getByCategoryName($categoryNames) {
-
-    }
-
     /**
      * Convenience method to get a poll object associated with a discussion ID
      * @param int $DiscussionID
@@ -48,23 +44,6 @@ class GoogleEventModel extends Gdn_Model{
     }
 
     /**
-     *Get the GoogleCalendarID by discussion
-     *@param int $DiscussionID
-     *@return string the corresponding GoogleCalendarID or null if not applicable
-     */
-    public function GetGoogleCalendarByDiscussion($DiscussionID){
-        return  $this->SQL
-            ->Select('d.GoogleCalendarID')
-            ->From('Discussion d')
-            ->Where('d.DiscussionID', $DiscussionID)
-            ->Get()
-            ->FirstRow()
-            ->GoogleCalendarID;
-
-    }
-
-
-    /**
      * Save the DiscussionEventDate
      * @param int $discussionID the id of the discussion to change
      * @param dateTime $date The dateTime opbject representing the start time of the event
@@ -77,28 +56,17 @@ class GoogleEventModel extends Gdn_Model{
             ->Put();
     }
 
-    /**
-     * Add/Update the Google calendar ID to the discussion
-     * @param $DiscussionID
-     * @param $eventID
-     * @throws Exception
-     */
-    public function addGoogleCalendarByDiscussion($DiscussionID, $eventID) {
-        Gdn::sql()->update('Discussion d')
-                ->set('d.GoogleCalendarID', $eventID)
-                ->where('d.DiscussionID', $DiscussionID)
-                ->put();
-    }
 
     /**
-     * Remove the Google calendar ID from discussion
-     * @param $DiscussionID
-     * @throws Exception
+     * Remove the DiscussionEventDate
+     * @param int $discussionID the id of the discussion to change
+     * @param dateTime $date The dateTime opbject representing the start time of the event
      */
-    public function removeGoogleCalendarByDiscussion($DiscussionID) {
-        Gdn::sql()->update('Discussion d')
-            ->set('d.GoogleCalendarID', NULL)
-            ->where('d.DiscussionID', $DiscussionID)
-            ->put();
+    public function RemoveDiscussionEventDate($discussionID){
+        $this->SQL
+            ->Update('Discussion')
+            ->Set('DiscussionEventDate', null)
+            ->Where('DiscussionID', $discussionID)
+            ->Put();
     }
 }
