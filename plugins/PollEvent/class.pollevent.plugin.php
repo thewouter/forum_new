@@ -57,7 +57,7 @@ class PollEventPlugin extends Gdn_Plugin {
     public function PostController_Render_Before($Sender) {
         // Add poll creation resources
         $Sender->AddCSSFile('admin.discussionpolls.css', self::$ApplicationFolder);
-        //$Sender->AddJSFile('admin.discussionpolls.js', self::$ApplicationFolder);
+        $Sender->AddJSFile('admin.discussionpolls.js', self::$ApplicationFolder);
 
         //get question template for jquery poll expansion
         $DefaultQuestionString = $this->_RenderQuestionFields($Sender->Form, FALSE);
@@ -76,26 +76,36 @@ class PollEventPlugin extends Gdn_Plugin {
     public function PostController_beforeBodyInput_handler($Sender) {
         $Sender->addJsFile('discussionevent.js', self::$ApplicationFolder);
         if (!$Sender->Form->authenticatedPostBack()) {
-            if (isset($Sender->Discussion) && $Sender->Discussion->DiscussionEventDate) {
+            if (isset($Sender->Discussion) && $Sender->Discussion->DiscussionEventDate && $Sender->Discussion->DiscussionEventDuration) {
                 $Sender->Form->setValue('DiscussionEventCheck', true);
                 $Sender->Form->setValue('DiscussionEventDates', date_format(new DateTime($Sender->Discussion->DiscussionEventDate), 'Y-m-d\TH:i:s'));
+                $Sender->Form->setValue('DiscussionEventDuration', $Sender->Discussion->DiscussionEventDuration);
             } else {
                 $Sender->Form->setValue('DiscussionEventCheck', false);
                 $Sender->Form->setValue('DiscussionEventDates', date('Y-m-d\T18:30:00'), new DateTime());
+                $Sender->Form->setValue('DiscussionEventDuration', 3);
             }
         }
 
-        $Year = Date('Y');
-        $YearRange = $Year.'-'.($Year + 3);
-
         echo '<div class="P"><div class="DiscussionEvent">';
         echo $Sender->Form->checkBox('DiscussionEventCheck', 'Is an event?');
-        echo '<div class="DiscussionEventDate"><div class="P">';
-        echo $Sender->Form->label('Date', 'DiscussionEventDates'), ' ';
+        echo '<div class="DiscussionEventDate"><div class="P">';;
         echo $Sender->Form->hidden('DiscussionEventDates');
+        echo '<div style="display: flex">';
+        echo '<div style="margin-right: 10px">';
+        echo $Sender->Form->label('Date', 'DiscussionEventDates', array('style' => 'width: 50%')), ' ';
+//        echo '</div>';
         echo $Sender->Form->textBox('DiscussionEventDates', array(
             'type' => 'datetime-local',
+            'style' => 'width: 80%;',
         ));
+        echo '</div><div>';
+        echo $Sender->Form->label('Hours', 'DiscussionEventDuration'), ' ';
+        echo $Sender->Form->textBox('DiscussionEventDuration', array(
+            'type' => 'number',
+            'style' => 'width: 80%',
+        ));
+        echo '</div>';
         echo '</div></div></div></div>';
     }
 
@@ -108,7 +118,11 @@ class PollEventPlugin extends Gdn_Plugin {
     public function PostController_DiscussionFormOptions_Handler($Sender) {
         $Session = Gdn::Session();
         // render check box
-        $Sender->EventArguments['Options'] .= '<li>' . $Sender->Form->CheckBox('DP_Attach', T('Attach Poll'), array('value' => '1', 'checked' => FALSE)) . '</li>';
+
+        $PollModel = new PollModel();
+        $pollAvailable = $PollModel->Exists($Sender->Discussion->DiscussionID);
+        self::log_er($pollAvailable);
+        $Sender->EventArguments['Options'] .= '<li>' . $Sender->Form->CheckBox('DP_Attach', T('Attach Poll'), array('value' => '1', 'checked' => $pollAvailable)) . '</li>';
         $Sender->EventArguments['Options'] .= '<li>' . $Sender->Form->CheckBox('MultipleCheck', "Only one vote", array('value' => '1', 'checked' => FALSE)) . '</li>';
         // Load up existing poll data
         if(GetValueR('Discussion.DiscussionID', $Sender)) {
@@ -155,7 +169,7 @@ class PollEventPlugin extends Gdn_Plugin {
             // No need to validate
             return FALSE;
         }
-        if(empty($FormPostValues['DP_Attachs'])) {
+        if(empty($FormPostValues['DP_Attach'])) {
             return FALSE;
         }
         // Validate that all poll fields are filled out
@@ -240,7 +254,7 @@ class PollEventPlugin extends Gdn_Plugin {
     private function saveEvent($FormPostValues, $DiscussionID) {
         $EventModel = new EventModel();
         if (GetValue('DiscussionEventCheck', $FormPostValues)) {
-            $EventModel->SaveDiscussionEventDate($DiscussionID, new dateTime($FormPostValues['DiscussionEventDates']));
+            $EventModel->SaveDiscussionEventDate($DiscussionID, new dateTime($FormPostValues['DiscussionEventDates']), $FormPostValues['DiscussionEventDuration']);
        } else {
             $EventModel->RemoveDiscussionEventDate($DiscussionID);
         }

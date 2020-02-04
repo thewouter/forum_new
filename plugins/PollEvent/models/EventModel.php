@@ -47,11 +47,13 @@ class EventModel extends Gdn_Model{
      * Save the DiscussionEventDate
      * @param int $discussionID the id of the discussion to change
      * @param dateTime $date The dateTime opbject representing the start time of the event
+     * @param $duration
+     * @throws Exception
      */
-    public function SaveDiscussionEventDate($discussionID, $date){
+    public function SaveDiscussionEventDate($discussionID, $date, $duration){
         $this->SQL
             ->Update('Discussion')
-            ->Set('DiscussionEventDate', $date->format("Y-m-d H:i:s"))
+            ->Set(array('DiscussionEventDate' => $date->format("Y-m-d H:i:s"), 'DiscussionEventDuration' => $duration))
             ->Where('DiscussionID', $discussionID)
             ->Put();
     }

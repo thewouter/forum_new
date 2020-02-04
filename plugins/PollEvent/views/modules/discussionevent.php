@@ -1,9 +1,11 @@
 <?php if (!defined('APPLICATION')) exit();
 
 
-function displayEventDateTime($EventDate) {
-    if ($EventDate) {
-        echo '<div class="DiscussionEventDate icon icon-calendar"> '.date_format(new dateTime($EventDate), "D j M \'y G:i").'</div>';
+if (!function_exists('displayEventDateTime')) {
+    function displayEventDateTime($EventDate) {
+        if ($EventDate) {
+            echo '<div class="DiscussionEventDate icon icon-calendar"> ' . date_format(new dateTime($EventDate), "D j M \'y G:i") . '</div>';
+        }
     }
 }
 

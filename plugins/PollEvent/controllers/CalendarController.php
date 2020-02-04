@@ -34,7 +34,7 @@ class CalendarController extends Gdn_Controller {
             $startDateTime = new \DateTime($event->DiscussionEventDate);
             $startDateTime->sub(new \DateInterval('PT1H'));
             $endDateTime = new \DateTime($event->DiscussionEventDate);
-            $endDateTime->add(new \DateInterval('PT2H'));
+            $endDateTime->add(new \DateInterval('PT' . $event->DiscussionEventDuration . 'H'));
             $endDateTime->sub(new \DateInterval('PT1H'));
             $vEvent = new Event();
             $vEvent->setDtStart($startDateTime)

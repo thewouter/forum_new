@@ -23,7 +23,8 @@ jQuery(document).ready(function($) {
   var AddQString = $('#DP_NextQuestion').text();
 
   // If there is input in the first question textbox onload, this is an existing poll
-  if ($('#DP_Questions0').val()) {
+    console.log($('#DP_Questions01').val())
+  if ($('#DP_Questions01').val()) {
     ExistingPoll = true;
     // Hide the extra questions and make the buttons make sense
     if ($('fieldset.DP_Question').length > 1) {
