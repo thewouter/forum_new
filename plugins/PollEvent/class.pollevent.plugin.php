@@ -20,10 +20,6 @@ class PollEventPlugin extends Gdn_Plugin {
      */
     public function __construct(DiscussionModel $discussionModel) {
         $this->discussionModel = $discussionModel;
-        foreach ($this->views as $v) {
-            require_once Gdn::controller()->fetchViewLocation($v, '', 'plugins/PollEvent', true, false);
-        }
-
     }
 
     /**
@@ -148,6 +144,16 @@ class PollEventPlugin extends Gdn_Plugin {
 
         //render form
         DPRenderQuestionForm($Sender->Form, $DiscussionPoll, $Disabled, $Closed);
+    }
+
+    /**
+     * Never block the ICal download page
+     * @param $Sender
+     */
+    public function  Gdn_Dispatcher_BeforeBlockDetect_Handler($Sender) {
+        $BlockExceptions =& $Sender->EventArguments['BlockExceptions'];
+        $BlockExceptions['/^calendar\/ical$/'] = Gdn_Dispatcher::BLOCK_NEVER;
+        self::log_er("test");
     }
 
     /**

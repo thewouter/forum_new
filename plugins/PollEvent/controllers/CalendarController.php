@@ -27,7 +27,7 @@ class CalendarController extends Gdn_Controller {
                 }
             }
         } else {
-            $events = $EventModel->getByDiscussionEventRange(0, false, false, false, array());
+            $events = $EventModel->getByDiscussionEventRange(0, false, new \DateTime('01-01-2005'), false, array());
         }
 
         foreach ($events as $event) {
