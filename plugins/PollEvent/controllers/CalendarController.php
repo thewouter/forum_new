@@ -19,16 +19,16 @@ class CalendarController extends Gdn_Controller {
                 $CategoryModel = CategoryModel::instance();
                 $cat = $CategoryModel->getWhere(array('Name' => $s))->result();
                 if (count($cat) > 0) {
-                    $DiscussionModel = DiscussionModel::instance();
-                    $events = array_merge($events, $DiscussionModel->getWhere(array('CategoryID' => $cat[0]->CategoryID))->result());
+                    $events = $EventModel->getByDiscussionEventRange(0, false, new \DateTime('01-01-2005'), false, array('d.CategoryID =' => $cat[0]->CategoryID))->result();
                     $events = array_filter($events, function ($var) {
                         return !is_null($var->DiscussionEventDate);
                     });
                 }
             }
         } else {
-            $events = $EventModel->getByDiscussionEventRange(0, false, new \DateTime('01-01-2005'), false, array());
+            $events = $EventModel->getByDiscussionEventRange(0, false, new \DateTime('01-01-2005'), false, array())->result();
         }
+
 
         foreach ($events as $event) {
             $startDateTime = new \DateTime($event->DiscussionEventDate);
@@ -46,8 +46,8 @@ class CalendarController extends Gdn_Controller {
                 ->setUrl(DiscussionUrl($event));
             $vCalendar->addComponent($vEvent);
         }
-        header('Content-Type: text/calendar; charset=utf-8');
-        header('Content-Disposition: attachment; filename="cal.ics"');
+        //header('Content-Type: text/calendar; charset=utf-8');
+        //header('Content-Disposition: attachment; filename="cal.ics"');
         echo $vCalendar->render();
     }
 }
