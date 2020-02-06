@@ -9,6 +9,14 @@ if (!function_exists('displayEventDateTime')) {
     }
 }
 
+if (!function_exists('displayEventDate')) {
+    function displayEventDate($EventDate) {
+        if ($EventDate) {
+            echo '<div class="DiscussionEventDate icon icon-calendar"> ' . date_format(new dateTime($EventDate), "D j M \'y") . '</div>';
+        }
+    }
+}
+
 if (!function_exists('WriteDiscussionEvent')) {
 	function WriteDiscussionEvent($Discussion, $Prefix) {
 	?>

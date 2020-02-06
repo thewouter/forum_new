@@ -427,6 +427,19 @@ class PollEventPlugin extends Gdn_Plugin {
     }
 
     /**
+     * Show date on discussions pages.
+     *
+     * @param DiscussionController $sender
+     * @param array $args
+     */
+    public function discussionsController_afterDiscussionTitle_handler($Sender, array $args) {
+       if ($args['Discussion'] != ''){
+           echo "<br>";
+           displayEventDate($args['Discussion']->DiscussionEventDate);
+       }
+    }
+
+    /**
      * Renders a poll object as results
      * @param stdClass $Poll the poll object we are rendering
      * @param boolean $Echo echo or return result string
