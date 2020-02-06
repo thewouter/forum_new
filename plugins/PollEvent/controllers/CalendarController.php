@@ -19,11 +19,13 @@ class CalendarController extends Gdn_Controller {
                 $CategoryModel = CategoryModel::instance();
                 $cat = $CategoryModel->getWhere(array('Name' => $s))->result();
                 if (count($cat) > 0) {
-                    $events = $EventModel->getByDiscussionEventRange(0, false, new \DateTime('01-01-2005'), false, array('d.CategoryID =' => $cat[0]->CategoryID))->result();
-                    $events = array_filter($events, function ($var) {
+                    $cat_events = $EventModel->getByDiscussionEventRange(0, false, new \DateTime('01-01-2005'), false, array('d.CategoryID =' => $cat[0]->CategoryID))->result();
+                    $cat_events = array_filter($cat_events, function ($var) {
                         return !is_null($var->DiscussionEventDate);
                     });
+                    $events = array_merge($events, $cat_events);
                 }
+
             }
         } else {
             $events = $EventModel->getByDiscussionEventRange(0, false, new \DateTime('01-01-2005'), false, array())->result();
@@ -47,7 +49,7 @@ class CalendarController extends Gdn_Controller {
             $vCalendar->addComponent($vEvent);
         }
         header('Content-Type: text/calendar; charset=utf-8');
-        header('Content-Disposition: attachment; filename="cal.ics"');
+        //header('Content-Disposition: attachment; filename="cal.ics"');
         echo $vCalendar->render();
     }
 }

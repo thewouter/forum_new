@@ -26,6 +26,7 @@ class EventModel extends Gdn_Model{
         if ($Offset !== false && $Limit !== false) {
             $this->SQL->limit($Limit, $Offset);
         }
+
         return $this->SQL->get();
     }
 
