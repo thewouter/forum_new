@@ -470,6 +470,10 @@ class PollEventPlugin extends Gdn_Plugin {
     }
 
     public function Base_Render_before($Sender) {
+
+        echo "<style> footer{display: none;} </style>";
+
+
         // only add the module if we are in the panel asset and NOT in the dashboard
         if (getValue('Panel', $Sender->Assets) && $Sender->MasterView != 'admin') {
             $DiscussionEventModule = new DiscussionEventModule($Sender);
