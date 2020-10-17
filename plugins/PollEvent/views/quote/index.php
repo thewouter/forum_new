@@ -22,7 +22,7 @@ if (!function_exists('WriteDiscussion')) :
                 </div>
                 <div class="Meta Meta-Discussion">
                     <span class="MItem"><?php
-                        echo printf('~ %s', $quote->name);
+                        echo '~ ' . $quote->name;
                         ?>
                     </span>
                 <span class="MItem MCount"><?php
