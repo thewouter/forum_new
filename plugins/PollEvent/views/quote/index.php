@@ -42,7 +42,7 @@ echo $this->Form->open(['id' => 'Form_Quote']);
 echo $this->Form->label('Wie?', 'name');
 echo wrap($this->Form->textBox('name', ['maxlength' => 100, 'class' => 'InputBox BigInput', 'spellcheck' => 'true']), 'div', ['class' => 'TextBoxWrapper']);
 echo $this->Form->label('Wat zei deze?', 'name');
-echo $this->Form->bodyBox('text', ['placeholder' => 'Quote', 'title' => 'Quote']);
+echo $this->Form->bodyBox('text', ['placeholder' => 'Quote', 'title' => 'Quote', 'style' => 'width: 100%']);
 
 ?>
 <div class=\"Buttons\"  style="margin: 10px">
