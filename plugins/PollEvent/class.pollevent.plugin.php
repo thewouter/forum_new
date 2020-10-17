@@ -638,5 +638,13 @@ class PollEventPlugin extends Gdn_Plugin {
             ->Column('UserID', 'int', FALSE, 'index.1')
             ->Column('OptionID', 'int', FALSE)
             ->Set();
+
+        $Construct->Table('Quote');
+        $Construct
+            ->PrimaryKey('QuoteID')
+            ->Column('text', 'varchar(512)', FALSE)
+            ->Column('name', 'varchar(140)', FALSE)
+            ->Column('date', 'datetime', FALSE)
+            ->Set();
     }
 }
