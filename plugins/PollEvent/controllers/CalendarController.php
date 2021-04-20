@@ -34,10 +34,10 @@ class CalendarController extends Gdn_Controller {
 
         foreach ($events as $event) {
             $startDateTime = new \DateTime($event->DiscussionEventDate);
-            $startDateTime->sub(new \DateInterval('PT1H'));
+            $startDateTime->sub(new \DateInterval('PT2H')); // Ugly fix for summertime
             $endDateTime = new \DateTime($event->DiscussionEventDate);
             $endDateTime->add(new \DateInterval('PT' . $event->DiscussionEventDuration . 'H'));
-            $endDateTime->sub(new \DateInterval('PT1H'));
+            $endDateTime->sub(new \DateInterval('PT2H')); // Ugly fix for summertime
             $vEvent = new Event();
             $vEvent->setDtStart($startDateTime)
                 ->setUniqueId('www.radixenschede.nl_' . $event->DiscussionID)
